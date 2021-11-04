@@ -1,8 +1,12 @@
 package hexlet.code;
 
+import hexlet.code.schemas.MapSchema;
 import hexlet.code.schemas.NumberSchema;
 import hexlet.code.schemas.StringSchema;
 import org.junit.jupiter.api.Test;
+
+import java.util.HashMap;
+import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
@@ -74,4 +78,26 @@ public class ValidatorTest {
         assertThat(schema.range(-1, 2).isValid(val2)).isEqualTo(false);
     }
 
+    @Test
+    void testRequiredMap() {
+        Validator v = new Validator();
+        MapSchema schema = v.map();
+
+        assertThat(schema.required().isValid(null)).isEqualTo(false);
+        assertThat(schema.required().isValid(new HashMap<String, String>())).isEqualTo(true);
+    }
+
+    @Test
+    void testSizeof() {
+        Validator v = new Validator();
+        MapSchema schema = v.map();
+        Map<String, String> data = new HashMap<>();
+        data.put("key1", "value1");
+        assertThat(schema.sizeof(1).isValid(data)).isEqualTo(true);
+        assertThat(schema.sizeof(2).isValid(data)).isEqualTo(false);
+
+        data.put("key2", "value2");
+        assertThat(schema.sizeof(1).isValid(data)).isEqualTo(false);
+        assertThat(schema.sizeof(2).isValid(data)).isEqualTo(true);
+    }
 }

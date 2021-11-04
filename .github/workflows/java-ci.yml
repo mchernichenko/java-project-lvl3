@@ -32,17 +32,5 @@ jobs:
           JACOCO_SOURCE_PATH: ${{github.workspace}}/src/main/java
         with:
           # The report file must be there, otherwise Code Climate won't find it
-        #  coverageCommand: make test
+          coverageCommand: make test
           coverageLocations: ${{github.workspace}}/build/reports/jacoco/test/jacocoTestReport.xml:jacoco
-
-#      Альтернативный рабочий вариант
-#      - run: curl -L https://codeclimate.com/downloads/test-reporter/test-reporter-latest-linux-amd64 > ./cc-test-reporter
-#      - run: chmod +x ./cc-test-reporter
-#      - run: ./cc-test-reporter before-build
-#      - run: make reports
-#      - run: ./cc-test-reporter format-coverage build/reports/jacoco/test/jacocoTestReport.xml --input-type jacoco
-#        env:
-#          JACOCO_SOURCE_PATH: src/main/java
-#      - run: ./cc-test-reporter upload-coverage
-#        env:
-#          CC_TEST_REPORTER_ID: ${{ secrets.CC_TEST_REPORTER_ID }}
