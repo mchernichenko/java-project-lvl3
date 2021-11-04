@@ -29,9 +29,11 @@ public class ValidatorTest {
         Validator v = new Validator();
         StringSchema schema = v.string();
         boolean actual;
-        actual= schema.minLength(5).isValid("12345");
+        final int val = 5;
+
+        actual = schema.minLength(val).isValid("12345");
         assertThat(actual).isEqualTo(true);
-        actual = schema.minLength(5).isValid("1234");
+        actual = schema.minLength(val).isValid("1234");
         assertThat(actual).isEqualTo(false);
     }
 
@@ -39,8 +41,10 @@ public class ValidatorTest {
     void testRequiredNumber() {
         Validator v = new Validator();
         NumberSchema schema = v.number();
+        final int val = 10;
+
         assertThat(schema.required().isValid(null)).isEqualTo(false);
-        assertThat(schema.required().isValid(10)).isEqualTo(true);
+        assertThat(schema.required().isValid(val)).isEqualTo(true);
         assertThat(schema.required().isValid("5")).isEqualTo(false);
     }
 
@@ -48,20 +52,26 @@ public class ValidatorTest {
     void testPositive() {
         Validator v = new Validator();
         NumberSchema schema = v.number();
+        final int val1 = -10;
+        final int val2 = 10;
+
         assertThat(schema.positive().isValid(0)).isEqualTo(false);
-        assertThat(schema.positive().isValid(-10)).isEqualTo(false);
-        assertThat(schema.positive().isValid(10)).isEqualTo(true);
+        assertThat(schema.positive().isValid(val1)).isEqualTo(false);
+        assertThat(schema.positive().isValid(val2)).isEqualTo(true);
     }
 
     @Test
     void testRange() {
         Validator v = new Validator();
         NumberSchema schema = v.number();
+        final int val1 = -2;
+        final int val2 = 3;
+
         assertThat(schema.range(-1, 2).isValid(-1)).isEqualTo(true);
         assertThat(schema.range(-1, 2).isValid(2)).isEqualTo(true);
         assertThat(schema.range(-1, 2).isValid(0)).isEqualTo(true);
-        assertThat(schema.range(-1, 2).isValid(-2)).isEqualTo(false);
-        assertThat(schema.range(-1, 2).isValid(3)).isEqualTo(false);
+        assertThat(schema.range(-1, 2).isValid(val1)).isEqualTo(false);
+        assertThat(schema.range(-1, 2).isValid(val2)).isEqualTo(false);
     }
 
 }
