@@ -1,15 +1,14 @@
 package hexlet.code.schemas;
 
-import java.util.Objects;
+public class StringSchema extends BaseSchema {
 
-public class StringSchema {
     /**
      * Проверка, что любая строка непустая.
      * @return - результат проверки
      */
-    public Check<String> required() {
-        Check<String> isValid = Objects::nonNull;
-        return isValid;
+    public StringSchema required() {
+        this.setCheck(x -> x != null && !x.equals(""));
+        return this;
     }
 
     /**
@@ -17,9 +16,9 @@ public class StringSchema {
      * @param str - подстрока
      * @return - результат проверки
      */
-    public Check<String> contains(String str) {
-        Check<String> isValid = x -> x.contains(str);
-        return isValid;
+    public StringSchema contains(String str) {
+        this.setCheck(x -> ((String) x).contains(str));
+        return this;
     }
 
     /**
@@ -27,8 +26,8 @@ public class StringSchema {
      * @param minLength - минимальная длина строки
      * @return - результат проверки
      */
-    public Check<String> minLength(int minLength) {
-        Check<String> isValid = x -> x.length() >= minLength;
-        return isValid;
+    public StringSchema minLength(int minLength) {
+        this.setCheck(x -> ((String) x).length() >= minLength);
+        return this;
     }
 }

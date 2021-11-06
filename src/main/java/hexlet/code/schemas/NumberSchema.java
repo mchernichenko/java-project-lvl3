@@ -1,22 +1,23 @@
 package hexlet.code.schemas;
 
-public class NumberSchema {
+public class NumberSchema extends BaseSchema {
+
     /**
      * Проверка, что объект является числом.
      * @return - результат проверки
      */
-    public Check<? super Object> required() {
-        Check<? super Object> isValid = x -> x instanceof Number;
-        return isValid;
-    }
+    public NumberSchema required() {
+        this.setCheck(x -> x instanceof Number);
+        return this;
+     }
 
     /**
      * Проверка, что число положительное.
      * @return - результат проверки
      */
-    public Check<Number> positive() {
-        Check<Number> isValid = x -> x.doubleValue() > 0;
-        return isValid;
+    public NumberSchema positive() {
+        this.setCheck(x -> x != null && (Integer) x > 0);
+        return this;
     }
 
     /**
@@ -25,8 +26,8 @@ public class NumberSchema {
      * @param maxValue - маскимальное значание
      * @return - результат проверки
      */
-    public Check<Number> range(int minValue, int maxValue) {
-        Check<Number> isValid = x -> x.doubleValue() >= minValue && x.doubleValue() <= maxValue;
-        return isValid;
+    public NumberSchema range(int minValue, int maxValue) {
+        this.setCheck(x -> (Integer) x >= minValue && (Integer) x <= maxValue);
+        return this;
     }
 }
