@@ -5,14 +5,15 @@ import java.util.List;
 import java.util.function.Predicate;
 
 public class BaseSchema {
-     private List<Predicate<? super Object>> сheckList = new ArrayList<>(); // список проверок
+
+     private List<Predicate<? super Object>> checkList = new ArrayList<>(); // список проверок
 
     /**
      * Добавить проверку в список проверок.
-     * @param check - проверк
+     * @param check - проверка
      */
     public void addCheck(Predicate<? super Object> check) {
-        this.сheckList.add(check);
+        this.checkList.add(check);
     }
 
     /**
@@ -24,6 +25,6 @@ public class BaseSchema {
      * @return - результат проверки.
      */
     public <T> boolean isValid(T t) {
-        return сheckList.stream().allMatch(x -> x.test(t));
+        return this.checkList.stream().allMatch(x -> x.test(t));
     }
 }
