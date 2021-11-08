@@ -9,6 +9,8 @@ import java.util.HashMap;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.junit.jupiter.api.Assertions.assertFalse;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 public class ValidatorTest {
 
@@ -47,7 +49,8 @@ public class ValidatorTest {
         NumberSchema schema = v.number();
 
         // критерий валидации для схемы не определён => вcегда true
-        assertThat(schema.isValid(null)).isEqualTo(true);
+        assertTrue(schema.isValid(null));
+        assertTrue(schema.isValid(1));
 
         // required – любое число включая ноль
         schema.required();
@@ -56,22 +59,24 @@ public class ValidatorTest {
         assertThat(schema.isValid(val)).isEqualTo(true);
         assertThat(schema.isValid("5")).isEqualTo(false);
 
-        // positive – положительное число
+        // positive – положительное число или его вообще нет
         final int val11 = -10;
         final int val12 = 10;
         schema.positive();
+        // отсутствие значения означает, что нечего проверять => true
+        assertThat(schema.isValid(null)).isEqualTo(true);
         assertThat(schema.isValid(0)).isEqualTo(false);
         assertThat(schema.isValid(val11)).isEqualTo(false);
         assertThat(schema.isValid(val12)).isEqualTo(true);
 
         // range – диапазон в который должны попадать числа включая границы
-        final int val21 = -2;
-        final int val22 = 3;
+        final int valMinis2 = -2;
+        final int val3 = 3;
         assertThat(schema.range(-1, 2).isValid(-1)).isEqualTo(true);
         assertThat(schema.range(-1, 2).isValid(2)).isEqualTo(true);
         assertThat(schema.range(-1, 2).isValid(0)).isEqualTo(true);
-        assertThat(schema.range(-1, 2).isValid(val21)).isEqualTo(false);
-        assertThat(schema.range(-1, 2).isValid(val22)).isEqualTo(false);
+        assertThat(schema.range(-1, 2).isValid(valMinis2)).isEqualTo(false);
+        assertThat(schema.range(-1, 2).isValid(val3)).isEqualTo(false);
     }
 
     @Test
@@ -80,50 +85,47 @@ public class ValidatorTest {
         MapSchema schema = v.map();
 
         // критерий валидации для схемы не определён => вcегда true
-        assertThat(schema.isValid(null)).isEqualTo(true);
+        assertTrue(schema.isValid(null));
 
         // required – требуется тип данных Map
         schema.required();
-        assertThat(schema.isValid(null)).isEqualTo(false);
-        assertThat(schema.isValid(new HashMap<String, String>())).isEqualTo(true);
+        assertFalse(schema.isValid(null));
+        assertTrue(schema.isValid(new HashMap<String, String>()));
 
         // sizeof – количество пар ключ-значений в объекте Map должно быть равно заданному
         Map<String, String> data = new HashMap<>();
         data.put("key1", "value1");
-        assertThat(schema.sizeof(1).isValid(data)).isEqualTo(true);
-        assertThat(schema.sizeof(2).isValid(data)).isEqualTo(false);
+        assertTrue(schema.sizeof(1).isValid(data));
+        assertFalse(schema.sizeof(2).isValid(data));
 
         data.put("key2", "value2");
-        assertThat(schema.sizeof(1).isValid(data)).isEqualTo(false);
-        assertThat(schema.sizeof(2).isValid(data)).isEqualTo(true);
+        assertFalse(schema.sizeof(1).isValid(data));
+        assertTrue(schema.sizeof(2).isValid(data));
 
         // shape - позволяет описывать валидацию для значений объекта Map по ключам.
         Map<String, BaseSchema> schemas = new HashMap<>();
         schemas.put("name", v.string().required()); // 'name' должен быть непустой строкой
-        schemas.put("age", v.number().positive()); // 'age' должен быть числом > 0
+        schemas.put("age", v.number().positive()); // 'age' должен быть числом > 0 или null
         schema.shape(schemas);
 
-        Map<String, Object> human1 = new HashMap<>();
-        final int val1 = 100;
-        human1.put("name", "Kolya");
-        human1.put("age", val1);
-
-        assertThat(schema.isValid(human1)).isEqualTo(true);
+        final int val100 = 100;
+        Map<String, Object> human1 = Map.of("name", "Kolya",
+                                            "age", val100);
+        assertTrue(schema.isValid(human1));
 
         Map<String, Object> human2 = new HashMap<>();
         human2.put("name", "Maya");
         human2.put("age", null);
-        assertThat(schema.isValid(human2)).isEqualTo(false);
+        assertTrue(schema.isValid(human2));
 
         Map<String, Object> human3 = new HashMap<>();
         human3.put("name", "");
         human3.put("age", null);
-        assertThat(schema.isValid(human3)).isEqualTo(false);
+        assertFalse(schema.isValid(human3));
 
-        Map<String, Object> human4 = new HashMap<>();
-        final int val2 = -5;
-        human4.put("name", "Valya");
-        human4.put("age", val2);
-        assertThat(schema.isValid(human4)).isEqualTo(false);
+        final int valMinus5 = -5;
+        Map<String, Object> human4 = Map.of("name", "Valya",
+                                            "age", valMinus5);
+        assertFalse(schema.isValid(human4));
     }
 }

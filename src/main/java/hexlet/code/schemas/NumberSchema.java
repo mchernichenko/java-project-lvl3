@@ -16,7 +16,7 @@ public class NumberSchema extends BaseSchema {
      * @return - результат проверки
      */
     public NumberSchema positive() {
-        this.setCheck(x -> x != null && (Integer) x > 0);
+        this.setCheck(x -> x == null || (Integer) x > 0);
         return this;
     }
 
