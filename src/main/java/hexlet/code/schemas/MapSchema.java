@@ -29,7 +29,7 @@ public class MapSchema extends BaseSchema {
      * @return - схема с определённой валидацией
      */
     public MapSchema required() {
-        this.setCheck(x -> x instanceof Map);
+        this.addCheck(x -> x instanceof Map);
         this.checkMap = null;
         return this;
     }
@@ -41,7 +41,7 @@ public class MapSchema extends BaseSchema {
      * @return - схема с определённой валидацией
      */
     public MapSchema sizeof(int cnt) {
-        this.setCheck(x -> ((Map) x).size() == cnt);
+        this.addCheck(x -> x == null || x instanceof Map && ((Map) x).size() == cnt);
         this.checkMap = null;
         return this;
     }

@@ -30,17 +30,14 @@ public class ValidatorTest {
         assertThat(schema.isValid("")).isEqualTo(false);
         assertThat(schema.isValid(null)).isEqualTo(false);
 
-        // contains – строка содержит определённую подстроку
+        // minLength – строка равна или длиннее указанного числа + required
+        final int val5 = 5;
+        assertTrue(schema.minLength(val5).isValid("12345"));
+        assertFalse(schema.minLength(val5).isValid("1234"));
+
+        // contains – строка содержит определённую подстроку + minLength + required
         assertThat(schema.contains("what").isValid("what does the fox say")).isEqualTo(true);
         assertThat(schema.contains("whatthe").isValid("what does the fox say")).isEqualTo(false);
-
-        // minLength – строка равна или длиннее указанного числа
-        boolean actual;
-        final int val = 5;
-        actual = schema.minLength(val).isValid("12345");
-        assertThat(actual).isEqualTo(true);
-        actual = schema.minLength(val).isValid("1234");
-        assertThat(actual).isEqualTo(false);
     }
 
     @Test
@@ -52,31 +49,29 @@ public class ValidatorTest {
         assertTrue(schema.isValid(null));
         assertTrue(schema.isValid(1));
 
-        // required – любое число включая ноль
-        schema.required();
-        final int val = 10;
-        assertThat(schema.isValid(null)).isEqualTo(false);
-        assertThat(schema.isValid(val)).isEqualTo(true);
-        assertThat(schema.isValid("5")).isEqualTo(false);
-
-        // positive – положительное число или его вообще нет
-        final int val11 = -10;
-        final int val12 = 10;
+        // positive – положительное число или null
+        final int val10 = 10;
+        final int valMinis10 = -10;
         schema.positive();
-        // отсутствие значения означает, что нечего проверять => true
         assertThat(schema.isValid(null)).isEqualTo(true);
         assertThat(schema.isValid(0)).isEqualTo(false);
-        assertThat(schema.isValid(val11)).isEqualTo(false);
-        assertThat(schema.isValid(val12)).isEqualTo(true);
+        assertThat(schema.isValid(valMinis10)).isEqualTo(false);
+        assertThat(schema.isValid(val10)).isEqualTo(true);
 
-        // range – диапазон в который должны попадать числа включая границы
-        final int valMinis2 = -2;
+        // required – любое число включая ноль + required
+        schema.required();
+        assertFalse(schema.isValid(null));
+        assertTrue(schema.isValid(val10));
+        assertFalse(schema.isValid("5"));
+
+        // range – диапазон в который должны попадать числа включая границы + required + positive
+        final int val2 = 2;
         final int val3 = 3;
-        assertThat(schema.range(-1, 2).isValid(-1)).isEqualTo(true);
-        assertThat(schema.range(-1, 2).isValid(2)).isEqualTo(true);
-        assertThat(schema.range(-1, 2).isValid(0)).isEqualTo(true);
-        assertThat(schema.range(-1, 2).isValid(valMinis2)).isEqualTo(false);
-        assertThat(schema.range(-1, 2).isValid(val3)).isEqualTo(false);
+        schema.range(val2, val10);
+        assertThat(schema.isValid(-1)).isEqualTo(false);
+        assertThat(schema.isValid(val2)).isEqualTo(true);
+        assertThat(schema.isValid(1)).isEqualTo(false);
+        assertThat(schema.isValid(val3)).isEqualTo(true);
     }
 
     @Test
@@ -93,13 +88,13 @@ public class ValidatorTest {
         assertTrue(schema.isValid(new HashMap<String, String>()));
 
         // sizeof – количество пар ключ-значений в объекте Map должно быть равно заданному
+        schema.sizeof(2);
+
         Map<String, String> data = new HashMap<>();
         data.put("key1", "value1");
-        assertTrue(schema.sizeof(1).isValid(data));
-        assertFalse(schema.sizeof(2).isValid(data));
+        assertFalse(schema.isValid(data));
 
         data.put("key2", "value2");
-        assertFalse(schema.sizeof(1).isValid(data));
         assertTrue(schema.sizeof(2).isValid(data));
 
         // shape - позволяет описывать валидацию для значений объекта Map по ключам.

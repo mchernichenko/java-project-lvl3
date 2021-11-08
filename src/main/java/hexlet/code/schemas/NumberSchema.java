@@ -7,27 +7,29 @@ public class NumberSchema extends BaseSchema {
      * @return - результат проверки
      */
     public NumberSchema required() {
-        this.setCheck(x -> x instanceof Number);
+        this.addCheck(x -> x instanceof Number);
         return this;
      }
 
     /**
-     * Проверка, что число положительное.
+     * Проверка, что число положительное (> 0).
+     * Если проверяемое значение не определено, то проверять нечего, и результат проверки true
      * @return - результат проверки
      */
     public NumberSchema positive() {
-        this.setCheck(x -> x == null || (Integer) x > 0);
+        this.addCheck(x -> x == null || (x instanceof Integer && (Integer) x > 0));
         return this;
     }
 
     /**
      * Проверка, что число лежит в диапазоне, включая границы.
+     * Если проверяемое значение не определено, то проверять нечего, и результат проверки true
      * @param minValue - минимальное значение
      * @param maxValue - маскимальное значание
-     * @return - результат проверки
+     * @return - результат проверки.
      */
     public NumberSchema range(int minValue, int maxValue) {
-        this.setCheck(x -> (Integer) x >= minValue && (Integer) x <= maxValue);
+        this.addCheck(x -> x == null || (x instanceof Integer && (Integer) x >= minValue && (Integer) x <= maxValue));
         return this;
     }
 }
