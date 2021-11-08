@@ -7,7 +7,7 @@ public class MapSchema extends BaseSchema {
     private Map<String, BaseSchema> checkMap;
 
     /**
-     * Валидиция по заданной схеме. Если схема не заданы, то валидации нет.
+     * Валидация по заданной схеме. Если схема не заданы, то валидации нет.
      * @return - результат проверки
      */
     @Override
