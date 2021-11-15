@@ -7,7 +7,7 @@ public class StringSchema extends BaseSchema {
      * @return - результат проверки
      */
     public StringSchema required() {
-        this.addCheck(x -> x != null && !x.equals(""));
+        this.addCheck(x -> x instanceof String && !((String) x).isEmpty());
         return this;
     }
 

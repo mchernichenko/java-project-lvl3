@@ -1,5 +1,5 @@
 plugins {
-    id 'application'
+    id 'java'
     // проверка наличия новых версий библиотек и плагинов используемых в проекте ./gradlew dependencyUpdates
     id 'com.github.ben-manes.versions' version '0.38.0'
     id 'checkstyle'
@@ -38,10 +38,6 @@ dependencies {
 // целевая версия Java под которую компилируется проект
 compileJava {
     options.release = 16
-}
-
-application {
-    mainClass = 'hexlet.code.App'
 }
 
 tasks.named('test') {
